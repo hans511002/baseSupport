@@ -1,0 +1,85 @@
+<project name="DbSupport" default="comJar" basedir="." >
+	<property name="version" value="1.0.0" />
+ 	<property name="destFile" value="${ant.project.name}-${version}.jar" />
+	<property name="src" location="./src" />
+	<property name="classes.dir" location="./WebRoot/WEB-INF/classes" />
+	<property name="release.dir" location="./release" />
+	<property name="lib.dir" location="./WebRoot/WEB-INF/lib" />
+	<property name="main-class" value="com.ery.base.support.utils.RunClass" />
+
+	<path id="project.classpath">
+			<fileset dir="${lib.dir}">
+			    <include name="*.jar" />
+			</fileset>
+	</path>
+	 <!-- clean -->
+	    <target name="clean">
+	      <delete dir="${release}/com" /> 
+	        <echo message="clean dir ${release}/com"></echo>
+	    </target>
+	<!-- generate directory -->
+		<target name="init" depends="clean">
+			<tstamp />
+ 			<mkdir dir="${release.dir}" />
+		</target>
+	
+	<!-- compile java -->
+		<target name="compile" depends="init">
+			<javac srcdir="${src}" destdir="${classes.dir}"   debuglevel="lines, vars, source" includeantruntime="no" 
+				bootclasspath="${java.home}/lib/rt.jar" encoding="utf-8" debug="on" fork="yes" memoryMaximumSize="512m">
+				<compilerarg line="-encoding UTF-8"/>
+				<!-- 给编译器指定编码，防止出现："警告： 编码 GBK 的不可映射字符"-->
+				<classpath refid="project.classpath" />
+			</javac>
+			<!-- 
+			<copy todir="${classes.dir}">
+				<fileset dir="hadoop-1.1.1-conf">
+				</fileset>
+			</copy>
+			-->
+ 		</target>
+	<!-- jar -->
+		<target name="release" depends="compile">
+			<mkdir dir="${release.dir}" />
+			<jar jarfile="${release.dir}/${destFile}" basedir="${classes.dir}">
+				<exclude name="*.properties"/>
+				<manifest>
+					<attribute name="Built-By" value="hans" />
+					<attribute name="Main-Class" value="${main-class}" />
+				</manifest>
+			</jar>
+			<copy todir="${release.dir}/">
+				<fileset dir="${lib.dir}">
+					<include name="druid-*.jar" />
+				</fileset>
+			</copy>
+		 
+        <copy todir="../libs/mrddx/" file="${release.dir}/${destFile}"/>
+        <copy todir="../HadoopWebClient/WebRoot/WEB-INF/lib/" file="${release.dir}/${destFile}"/>
+    </target>
+	<!-- comjar -->
+		<target name="comJar" >
+			<mkdir dir="${release.dir}" />
+			<jar jarfile="${release.dir}/${destFile}" basedir="${classes.dir}">
+				<exclude name="*.properties"/>
+				<manifest>
+					<attribute name="Built-By" value="hans" />
+					<attribute name="Main-Class" value="${main-class}" />
+				</manifest>
+			</jar>
+			<copy todir="${release.dir}/">
+				<fileset dir="${lib.dir}">
+					<include name="druid-*.jar" />
+				</fileset>
+			</copy>
+        <copy todir="../libs/rdbms/" file="${release.dir}/${destFile}"/>
+        <copy todir="../HadoopWebClient/WebRoot/WEB-INF/lib/" file="${release.dir}/${destFile}"/>
+        <copy todir="../estorm/lib/rdbms/" file="${release.dir}/${destFile}"/>
+        <copy todir="../collect/lib/rdbms/" file="${release.dir}/${destFile}"/>
+        <copy todir="../installer/lib/rdbms/" file="${release.dir}/${destFile}"/>
+        <copy todir="../collectClient/lib/rdbms/" file="${release.dir}/${destFile}"/>
+    </target>
+	
+	
+
+</project>

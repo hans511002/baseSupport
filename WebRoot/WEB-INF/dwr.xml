@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE dwr PUBLIC "-//GetAhead Limited//DTD Direct Web Remoting 2.0//EN" "http://www.getahead.ltd.uk/dwr/dwr20.dtd">
+<dwr xmlns="http://directwebremoting.org/schema/dwr20" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://directwebremoting.org/schema/dwr20 ../META-INF/dwr20.xsd ">
+    <init>
+        <creator id="db" class="tydic.frame.dwr.DBCreator"/>
+        <converter id="nestedMap" class="tydic.frame.dwr.NestedMapConverter"/>
+        <converter id="nestedCollection" class="tydic.frame.dwr.NestedCollectionConverter"/>
+    </init>
+    <allow>
+        <create creator="db" javascript="TestAction">
+            <param name="class" value="tydic.frame.test.TestAction"/>
+        </create>
+        <create creator="db" javascript="DhtmlxAction">
+            <param name="class" value="tydic.frame.test.DhtmlxAction"/>
+        </create>
+        <!--容器类转换器-->
+        <convert converter="nestedCollection" match="java.util.Collection"/>
+        <convert converter="nestedMap" match="java.util.Map"/>
+
+        <!--bean类转换器-->
+        <convert converter="bean" match="tydic.frame.test.Page"/>
+        <convert converter="bean" match="tydic.frame.test.UserPO"/>
+        
+        <!--异常处理 -->
+        <convert converter="bean" match="java.lang.StackTraceElement" />  
+        <convert converter="exception" match="java.lang.Throwable"/>
+        
+    </allow>
+</dwr>
