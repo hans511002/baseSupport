@@ -16,21 +16,14 @@ import com.ery.base.support.sys.DataSourceManager;
 import com.ery.base.support.sys.SystemVariable;
 import com.ery.base.support.utils.Convert;
 
-
 public abstract class BaseDAO {
 
-	
 	public static Map<Long, Boolean> IS_TRANSACTION_MAP = new HashMap<Long, Boolean>();
 
-	
 	private List<Connection> connections = new ArrayList<Connection>();
 
-	
 	private Map<Object, DataAccess> dataAccesses = new HashMap<Object, DataAccess>();
-	
-	private String defaultDataSource = SystemVariable.getString("db.default", "config1");
 
-	
 	public Connection getConnection(Object key) {
 		Connection conn = DataSourceManager.getConnection(Convert.toString(key));
 		long threadId = Thread.currentThread().getId();
@@ -46,12 +39,10 @@ public abstract class BaseDAO {
 		return conn;
 	}
 
-	
 	public Connection getConnection() {
 		return getConnection(SystemVariable.DSID);
 	}
 
-	
 	public Connection getConnection(String user, String passwd, String url) throws SQLException {
 		Connection conn = DataSourceManager.getConnection(user, passwd, url);
 		long threadId = Thread.currentThread().getId();
@@ -67,7 +58,6 @@ public abstract class BaseDAO {
 		return conn;
 	}
 
-	
 	public boolean isConnectionClosed(Connection connection) {
 		if (connection == null) {
 			return true;
@@ -85,7 +75,6 @@ public abstract class BaseDAO {
 		return false;
 	}
 
-	
 	protected DataAccess getDataAccess(String user, String passwd, String url) throws SQLException {
 		String key = user + "/" + passwd + "@" + url;
 		DataAccess dataAccess = null;
@@ -96,8 +85,8 @@ public abstract class BaseDAO {
 				Connection conn = dataAccess.getConnection();
 				if (isConnectionClosed(conn)) {
 					dataAccess.setConnection(getConnection(user, passwd, url));
-				} else if (BaseDAO.IS_TRANSACTION_MAP.containsKey(threadId) && BaseDAO.IS_TRANSACTION_MAP.get(threadId)
-						&& dataAccess.getConnection().getAutoCommit()) {
+				} else if (BaseDAO.IS_TRANSACTION_MAP.containsKey(threadId) &&
+						BaseDAO.IS_TRANSACTION_MAP.get(threadId) && dataAccess.getConnection().getAutoCommit()) {
 					dataAccess.getConnection().setAutoCommit(false);
 				} else {
 
@@ -113,7 +102,6 @@ public abstract class BaseDAO {
 		return dataAccess;
 	}
 
-	
 	protected DataAccess getDataAccess(Object key) {
 		DataAccess dataAccess = null;
 		if (dataAccesses.containsKey(key)) {
@@ -123,8 +111,8 @@ public abstract class BaseDAO {
 				Connection conn = dataAccess.getConnection();
 				if (conn == null || conn.isClosed()) {
 					dataAccess.setConnection(getConnection(key));
-				} else if (BaseDAO.IS_TRANSACTION_MAP.containsKey(threadId) && BaseDAO.IS_TRANSACTION_MAP.get(threadId)
-						&& dataAccess.getConnection().getAutoCommit()) {
+				} else if (BaseDAO.IS_TRANSACTION_MAP.containsKey(threadId) &&
+						BaseDAO.IS_TRANSACTION_MAP.get(threadId) && dataAccess.getConnection().getAutoCommit()) {
 					dataAccess.getConnection().setAutoCommit(false);
 				} else {
 
@@ -144,17 +132,14 @@ public abstract class BaseDAO {
 		return dataAccess;
 	}
 
-	
 	protected DataAccess getDataAccess() {
 		return getDataAccess(SystemVariable.DSID);
 	}
 
-	
 	protected DataAccess getDataAccessInstance(Connection connection) {
 		return DataAccessFactory.getInstance(connection);
 	}
 
-	
 	public static void beginTransaction() {
 
 		long threadId = Thread.currentThread().getId();
@@ -175,7 +160,6 @@ public abstract class BaseDAO {
 		}
 	}
 
-	
 	public static void rollback() {
 		long threadId = Thread.currentThread().getId();
 		if (BaseDAO.IS_TRANSACTION_MAP.containsKey(threadId) && BaseDAO.IS_TRANSACTION_MAP.get(threadId)) {
@@ -192,7 +176,6 @@ public abstract class BaseDAO {
 		}
 	}
 
-	
 	public static void commit() {
 		long threadId = Thread.currentThread().getId();
 		if (BaseDAO.IS_TRANSACTION_MAP.containsKey(threadId) && BaseDAO.IS_TRANSACTION_MAP.get(threadId)) {
@@ -209,7 +192,6 @@ public abstract class BaseDAO {
 		}
 	}
 
-	
 	public final void close() {
 		long threadId = Thread.currentThread().getId();
 		BaseDAO.IS_TRANSACTION_MAP.remove(threadId);

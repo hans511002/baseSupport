@@ -27,14 +27,11 @@ import com.ery.base.support.utils.Convert;
 import com.ery.base.support.utils.Utils;
 import com.ery.base.support.web.SystemInitListener;
 
-
 public class DataSourceManager {
 
-	
 	private static Map<String, Object> dataSource = new HashMap<String, Object>();
 	private static Map<String, DataSrcPO> dataSrcPOMap = new HashMap<String, DataSrcPO>();
 
-	
 	private static Hashtable<Long, Hashtable<String, Connection>> usingConnections = new Hashtable<Long, Hashtable<String, Connection>>();
 	static boolean loadDataSource = false;
 
@@ -88,7 +85,6 @@ public class DataSourceManager {
 
 	}
 
-	
 	public synchronized static DataSource dataSourceInit() {
 		String dbConfFile = SystemConstant.getDB_CONF_FILE();
 		return dataSourceInit(dbConfFile);
@@ -202,7 +198,6 @@ public class DataSourceManager {
 		}
 	}
 
-	
 	public static Connection getConnection(String dsId) {
 		long threadId = Thread.currentThread().getId();
 		if (dataSource.get(dsId) != null && dataSource.get(dsId) instanceof DataSource) {
@@ -245,6 +240,11 @@ public class DataSourceManager {
 	public static Connection getConnection(final String user, final String passwd, final String url)
 			throws SQLException {
 		String key = user + "/" + passwd + "@" + url;
+		return getConnection(key, user, passwd, url);
+	}
+
+	public static Connection getConnection(final String key, final String user, final String passwd, final String url)
+			throws SQLException {
 		if (dataSource.containsKey(key)) {
 			return getConnection(key);
 		} else {
@@ -261,7 +261,6 @@ public class DataSourceManager {
 		}
 	}
 
-	
 	public static Connection[] getUsedConnection() {
 		long threadId = Thread.currentThread().getId();
 		Connection[] connections = new Connection[] {};
@@ -271,7 +270,6 @@ public class DataSourceManager {
 		return connections;
 	}
 
-	
 	public static void pushUsedConnection(String key, Connection connection) {
 		long threadId = Thread.currentThread().getId();
 		// 如果不存在线程，新增用户链接
@@ -283,7 +281,6 @@ public class DataSourceManager {
 		}
 	}
 
-	
 	public static void destroy() {
 		long threadId = Thread.currentThread().getId();
 		if (usingConnections.containsKey(threadId)) {
@@ -305,7 +302,6 @@ public class DataSourceManager {
 		}
 	}
 
-	
 	public static void destroy(List<Connection> conns) {
 		long threadId = Thread.currentThread().getId();
 		if (usingConnections.containsKey(threadId)) {
@@ -331,12 +327,10 @@ public class DataSourceManager {
 		}
 	}
 
-	
 	public static Map<String, Object> getAllDataSource() {
 		return dataSource;
 	}
 
-	
 	public static void addDataSource(String key, Object ds) {
 		if (!dataSource.containsKey(key))
 			dataSource.put(key, ds);
@@ -346,12 +340,10 @@ public class DataSourceManager {
 		return dataSource.get(key);
 	}
 
-	
 	public static void removeDataSource(String key) {
 		dataSource.remove(key);
 	}
 
-	
 	public static boolean containKey(String key) {
 		return dataSource.containsKey(key);
 	}

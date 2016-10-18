@@ -8,10 +8,7 @@
     </init>
     <allow>
         <create creator="db" javascript="TestAction">
-            <param name="class" value="tydic.frame.test.TestAction"/>
-        </create>
-        <create creator="db" javascript="DhtmlxAction">
-            <param name="class" value="tydic.frame.test.DhtmlxAction"/>
+            <param name="class" value="com.ery.base.support.test.TestAction"/>
         </create>
         <!--容器类转换器-->
         <convert converter="nestedCollection" match="java.util.Collection"/>
@@ -19,7 +16,7 @@
 
         <!--bean类转换器-->
         <convert converter="bean" match="tydic.frame.test.Page"/>
-        <convert converter="bean" match="tydic.frame.test.UserPO"/>
+        <convert converter="bean" match="com.ery.base.support.test.UserPO"/>
         
         <!--异常处理 -->
         <convert converter="bean" match="java.lang.StackTraceElement" />  

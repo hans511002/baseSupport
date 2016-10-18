@@ -9,10 +9,8 @@ import java.util.Properties;
 import javax.servlet.ServletContext;
 
 import com.ery.base.support.log4j.LogUtils;
-import com.ery.base.support.sys.SystemConstant;
 import com.ery.base.support.sys.SystemVariable;
 import com.ery.base.support.web.ISystemStart;
-
 
 public class SystemVariableInit implements ISystemStart {
 
@@ -44,11 +42,6 @@ public class SystemVariableInit implements ISystemStart {
 				load(file);
 			}
 			load(new File(System.getProperty("java.home"), "local.properties"));
-			String sysConfFile = SystemConstant.getSYS_CONF_FILE();
-			if (sysConfFile != null) {
-				File file = new File(CLASS_PATH, sysConfFile);
-				load(file);
-			}
 		}
 		SystemVariable.init();
 		SystemVariable.DSID = "" + SystemVariable.getDefaultDataSourceID();// 管理库DSID
@@ -70,7 +63,7 @@ public class SystemVariableInit implements ISystemStart {
 					try {
 						inputStream.close();
 					} catch (IOException e) {
-						e.printStackTrace();
+						LogUtils.error("load config file error:" + file.getAbsolutePath(), e);
 					}
 				}
 			}

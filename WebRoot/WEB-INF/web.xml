@@ -84,11 +84,18 @@
 			<param-name>crossDomainSessionSecurity</param-name>
 			<param-value>false</param-value>
 		</init-param>
+		<!-- bi.view -->
+        <init-param>
+            <param-name>vi-view</param-name>
+            <param-value>/WEB-INF/bi-view-dwr.xml</param-value>
+        </init-param>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>DwrServlet</servlet-name>
 		<url-pattern>/dwr/*</url-pattern>
 	</servlet-mapping>
+	
+	
 	<welcome-file-list>
 		<welcome-file>index.jsp</welcome-file>
 	</welcome-file-list>

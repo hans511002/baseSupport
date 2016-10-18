@@ -27,19 +27,14 @@ import com.ery.base.support.jdbc.mapper.PrimitiveListMapper;
 import com.ery.base.support.jdbc.mapper.PrimitiveMapper;
 import com.ery.base.support.log4j.LogUtils;
 
-
 public class DataAccess {
 
-	
 	private Connection connection = null;
 
-	
 	private boolean isShowSql = false;
 
-	
 	private int queryTimeout = 10;
 
-	
 	public DataAccess(Connection conn) {
 		this.connection = conn;
 	}
@@ -47,7 +42,6 @@ public class DataAccess {
 	public DataAccess() {
 	}
 
-	
 	public int execUpdate(String sql) {
 		logDebug(sql);
 		int result = -1;
@@ -65,7 +59,6 @@ public class DataAccess {
 		return result;
 	}
 
-	
 	public boolean execNoQuerySql(String sql) {
 		logDebug(sql);
 		boolean result = false;
@@ -84,7 +77,6 @@ public class DataAccess {
 		return result;
 	}
 
-	
 	public int execUpdate(String sql, Object... params) {
 		// 转换当前的SQL语句
 		logDebug(sql, params);
@@ -104,7 +96,6 @@ public class DataAccess {
 		return result;
 	}
 
-	
 	public boolean execNoQuerySql(String sql, Object... params) {
 		logDebug(sql, params);
 		boolean result = false;
@@ -124,7 +115,6 @@ public class DataAccess {
 		return result;
 	}
 
-	
 	public ResultSet execQuerySql(String sql) {
 		logDebug(sql);
 		Statement statement = null;
@@ -141,7 +131,6 @@ public class DataAccess {
 		return rs;
 	}
 
-	
 	public ResultSet execQuerySql(String sql, int resultSetType, int resultSetConcurrency) {
 		logDebug(sql);
 		Statement statement = null;
@@ -158,7 +147,6 @@ public class DataAccess {
 		return rs;
 	}
 
-	
 	public void execCall(String sql, Object... params) {
 		logDebug(sql, params);
 		CallableStatement callableStatement = null;
@@ -175,7 +163,6 @@ public class DataAccess {
 		}
 	}
 
-	
 	public CallableStatement execQueryCall(String sql, Object... params) {
 		logDebug(sql, params);
 		CallableStatement callableStatement = null;
@@ -192,7 +179,6 @@ public class DataAccess {
 		return callableStatement;
 	}
 
-	
 	public ResultSet execQuerySql(String sql, Object... params) {
 		ResultSet rs = null;
 		if (params == null || params.length == 0) {
@@ -215,7 +201,6 @@ public class DataAccess {
 		return rs;
 	}
 
-	
 	public ResultSet execQuerySql(String sql, int resultSetType, int resultSetConcurrency, Object... params) {
 
 		ResultSet rs = null;
@@ -243,7 +228,6 @@ public class DataAccess {
 		return rs;
 	}
 
-	
 	public int[] execUpdateBatch(String sql, int buffSize, IParamsSetter paramsSetter) {
 		logDebug(sql);
 		PreparedStatement preparedStatement = null;
@@ -271,12 +255,10 @@ public class DataAccess {
 		}
 	}
 
-	
 	public int[] execUpdateBatch(String sql, IParamsSetter paramsSetter) {
 		return execUpdateBatch(sql, 20000, paramsSetter);
 	}
 
-	
 	public int[] execUpdateBatch(String sql, final Object[][] params) {
 		return execUpdateBatch(sql, 20000, new IParamsSetter() {
 
@@ -290,7 +272,6 @@ public class DataAccess {
 		});
 	}
 
-	
 	public int[] execUpdateBatch(String[] sqls) {
 		logDebug(Arrays.deepToString(sqls));
 		Statement statement = null;
@@ -308,7 +289,6 @@ public class DataAccess {
 		}
 	}
 
-	
 	public Object[][] queryForArray(String sql, boolean includeColNames, Object... params) {
 		ResultSet rs = null;
 		Object[][] rtn = null;
@@ -331,7 +311,6 @@ public class DataAccess {
 		return rtn;
 	}
 
-	
 	public <T> T[] queryForPrimitiveArray(String sql, Class<T> clazz, Object... params) {
 		return queryByRowMapper(sql, new PrimitiveArrayMapper<T>(clazz), params);
 	}
@@ -344,12 +323,10 @@ public class DataAccess {
 		return queryByRowMapper(sql, new MapArrayMapper(), params);
 	}
 
-	
 	public List<Map<String, Object>> queryForList(String sql, Object... params) {
 		return queryByRowMapper(sql, new MapListMapper(), params);
 	}
 
-	
 	public <T> List<T> queryForPrimitiveList(String sql, Class<T> clazz, Object... params) {
 		return queryByRowMapper(sql, new PrimitiveListMapper<T>(clazz), params);
 	}
@@ -358,63 +335,51 @@ public class DataAccess {
 		return queryByRowMapper(sql, new BeanListMapper<T>(clazz), params);
 	}
 
-	
-	public long queryForLong(String sql, Object... params) {
-		return queryForObject(sql, long.class, params);
+	public Long queryForLong(String sql, Object... params) {
+		return queryForObject(sql, Long.class, params);
 	}
 
-	
-	public long queryForLongByNvl(String sql, long defaultVal, Object... params) {
-		return queryForObjectByNvl(sql, long.class, defaultVal, params);
+	public Long queryForLongByNvl(String sql, Long defaultVal, Object... params) {
+		return queryForObjectByNvl(sql, Long.class, defaultVal, params);
 	}
 
-	
 	public int queryForInt(String sql, Object... params) {
 		return queryForObject(sql, int.class, params);
 	}
 
-	
 	public int queryForIntByNvl(String sql, int defaultVal, Object... params) {
 		return queryForObjectByNvl(sql, int.class, defaultVal, params);
 	}
 
-	
 	public String queryForString(String sql, Object... params) {
 		return queryForObject(sql, String.class, params);
 	}
 
-	
 	public <T> T queryForObject(String sql, Class<T> clazz, Object... params) {
 		return queryByRowMapper(sql, new PrimitiveMapper<T>(clazz), params);
 	}
 
-	
 	public <T> T queryForObjectByNvl(String sql, Class<T> clazz, T defaultVal, Object... params) {
 		T t = queryByRowMapper(sql, new PrimitiveMapper<T>(clazz, defaultVal), params);
 		return t == null ? defaultVal : t;
 	}
 
-	
 	public Map<String, Object> queryForMap(String sql, Object... params) {
 		return queryByRowMapper(sql, new MapColumnMapper(), params);
 	}
 
-	
 	public <T> T queryForBean(String sql, Class<T> clazz, Object... params) {
 		return queryByRowMapper(sql, new BeanMapper<T>(clazz), params);
 	}
 
-	
 	public Map<String, Map<String, Object>> queryForMapMap(String sql, String keyColName, Object... params) {
 		return queryByRowMapper(sql, new MapMapMapper(keyColName), params);
 	}
 
-	
 	public Map<String, List<Map<String, Object>>> queryForMapListMap(String sql, String keyColName, Object... params) {
 		return queryByRowMapper(sql, new MapListMapMapper(keyColName), params);
 	}
 
-	
 	public <T> T queryByRowMapper(String sql, IRowMapper<T> rowMapper, Object... params) {
 		ResultSet rs = null;
 		T t = null;
@@ -429,7 +394,6 @@ public class DataAccess {
 		return t;
 	}
 
-	
 	public void queryByRowHandler(String sql, IRowHandler rowHandler, Object... params) {
 		ResultSet rs = null;
 		try {
@@ -446,7 +410,6 @@ public class DataAccess {
 		}
 	}
 
-	
 	public DataTable queryForDataTable(String sql, Object... params) {
 		ResultSet rs = null;
 		try {
@@ -459,7 +422,6 @@ public class DataAccess {
 		}
 	}
 
-	
 	public DataTable queryForDataTableByPage(String sql, int posStart, int count, Object... params) {
 		ResultSet rs = null;
 		try {
@@ -472,7 +434,6 @@ public class DataAccess {
 		}
 	}
 
-	
 	public DataTable queryForDataTableByPageCount(String sql, int posStart, int count, int totalCount, Object... params) {
 		ResultSet rs = null;
 		try {
@@ -485,7 +446,6 @@ public class DataAccess {
 		}
 	}
 
-	
 	public DataTable queryForDataTableByPageTotal(String sql, int posStart, int count, boolean isCalTotal,
 			Object... params) {
 		ResultSet rs = null;
@@ -499,17 +459,14 @@ public class DataAccess {
 		}
 	}
 
-	
 	public void beginTransaction() throws Exception {
 		connection.setAutoCommit(false);
 	}
 
-	
 	public void commit() throws Exception {
 		connection.commit();
 	}
 
-	
 	public void rollback() {
 		if (connection != null) {
 			try {
@@ -521,39 +478,32 @@ public class DataAccess {
 		}
 	}
 
-	
 	public void setConnection(Connection connection) {
 		this.connection = connection;
 	}
 
-	
 	public Connection getConnection() {
 		return connection;
 	}
 
-	
 	public boolean isShowSql() {
 		return isShowSql;
 	}
 
-	
 	public void setShowSql(boolean isShowSql) {
 		this.isShowSql = isShowSql;
 	}
 
-	
 	public int getQueryTimeout() {
 		return queryTimeout;
 	}
 
-	
 	public int setQueryTimeout(int queryTimeout) {
 		int oldQueryTimeout = this.queryTimeout;
 		this.queryTimeout = queryTimeout;
 		return oldQueryTimeout;
 	}
 
-	
 	public void close(Statement statement) {
 		if (statement != null) {
 			try {
@@ -564,7 +514,6 @@ public class DataAccess {
 		}
 	}
 
-	
 	public void close(ResultSet rs) {
 		if (rs != null) {
 			Statement statement = null;
@@ -590,7 +539,6 @@ public class DataAccess {
 		}
 	}
 
-	
 	private void logDebug(String sql, Object... params) {
 		if (isShowSql) {
 			StackTraceElement[] traces = Thread.currentThread().getStackTrace();
@@ -616,7 +564,6 @@ public class DataAccess {
 		}
 	}
 
-	
 	private void logError(String sql, Throwable t, Object... params) {
 		StackTraceElement[] traces = Thread.currentThread().getStackTrace();
 		for (int i = 1; i < traces.length; i++) {
@@ -646,7 +593,6 @@ public class DataAccess {
 		}
 	}
 
-	
 	private String replaceParam(String sql, Object[] params) {
 		StringBuffer buffer = new StringBuffer();
 		if (params != null && params.length != 0) {
@@ -670,7 +616,6 @@ public class DataAccess {
 		return buffer.toString();
 	}
 
-	
 	private void bindParams(PreparedStatement preparedStatement, Object[] params) throws SQLException {
 		if (params != null && params.length != 0) {
 			for (int i = 0; i < params.length; i++) {
