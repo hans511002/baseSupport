@@ -17,12 +17,20 @@ import com.ery.base.support.sys.SystemVariable;
 import com.ery.base.support.utils.Convert;
 
 public abstract class BaseDAO {
+	private Boolean isMysql = null;
 
 	public static Map<Long, Boolean> IS_TRANSACTION_MAP = new HashMap<Long, Boolean>();
 
 	private List<Connection> connections = new ArrayList<Connection>();
 
 	private Map<Object, DataAccess> dataAccesses = new HashMap<Object, DataAccess>();
+
+	public boolean isMysql() {
+		if (isMysql == null) {
+			isMysql = "mysql".equals(getDataAccess().getDatabaseName());
+		}
+		return isMysql;
+	}
 
 	public Connection getConnection(Object key) {
 		Connection conn = DataSourceManager.getConnection(Convert.toString(key));

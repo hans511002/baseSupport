@@ -6,7 +6,6 @@ import com.ery.base.support.utils.RemotingUtils;
 import com.ery.base.support.utils.Utils;
 import com.ery.base.support.utils.hash.HashFunctions;
 
-
 public class UtilTest {
 
 	public static void main(String[] args) throws Exception {

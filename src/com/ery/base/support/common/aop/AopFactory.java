@@ -253,14 +253,15 @@ public class AopFactory implements Opcodes {
 			if (returnType.getOpcode(IRETURN) != RETURN) {
 				Class<?> warpClass = getWarpClass(returnType, true);
 				if (warpClass != Object.class) {// 检查返回类型。
-					System.err.println(Type.getType(warpClass).getDescriptor());
-					if (warpClass == boolean.class || warpClass == int.class || warpClass == short.class
-							|| warpClass == char.class || warpClass == long.class || warpClass == byte.class
-							|| warpClass == float.class || warpClass == double.class) {
+					// 参数类型
+					// System.err.println(Type.getType(warpClass).getDescriptor());
+					if (warpClass == boolean.class || warpClass == int.class || warpClass == short.class ||
+							warpClass == char.class || warpClass == long.class || warpClass == byte.class ||
+							warpClass == float.class || warpClass == double.class) {
 						visitor.visitTypeInsn(CHECKCAST, Type.getType(warpClass).getDescriptor());
-					} else if (warpClass != boolean[].class && warpClass != int[].class && warpClass != short[].class
-							&& warpClass != char[].class && warpClass != long[].class && warpClass != byte[].class
-							&& warpClass != float[].class && warpClass != double[].class) {
+					} else if (warpClass != boolean[].class && warpClass != int[].class && warpClass != short[].class &&
+							warpClass != char[].class && warpClass != long[].class && warpClass != byte[].class &&
+							warpClass != float[].class && warpClass != double[].class) {
 						visitor.visitTypeInsn(CHECKCAST, warpClass.isArray() ? Type.getType(warpClass).getDescriptor()
 								: Type.getType(warpClass).getInternalName());
 					} else {
@@ -516,8 +517,8 @@ public class AopFactory implements Opcodes {
 				} else if (type.getClassName().toLowerCase().equals("int")) {
 					className += "Integer";
 				} else {
-					className += type.getClassName().toLowerCase().substring(0, 1).toUpperCase()
-							+ type.getClassName().toLowerCase().substring(1);
+					className += type.getClassName().toLowerCase().substring(0, 1).toUpperCase() +
+							type.getClassName().toLowerCase().substring(1);
 				}
 			}
 

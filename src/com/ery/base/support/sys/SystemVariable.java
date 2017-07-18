@@ -128,6 +128,7 @@ public class SystemVariable {
 			try {
 				conf.load(in);
 				in.close();
+				System.getProperties().putAll(SystemVariable.getConf());
 				LogUtils.info("加载[" + sysConfFile + "]文件OK!");
 			} catch (Exception e) {
 				LogUtils.error("加载[" + sysConfFile + "]文件出错!" + e.getMessage());

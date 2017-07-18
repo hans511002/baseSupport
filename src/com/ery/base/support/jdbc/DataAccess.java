@@ -42,6 +42,10 @@ public class DataAccess {
 	public DataAccess() {
 	}
 
+	public boolean isMysql() {
+		return "mysql".equals(getDatabaseName());
+	}
+
 	public int execUpdate(String sql) {
 		logDebug(sql);
 		int result = -1;
@@ -486,6 +490,28 @@ public class DataAccess {
 		return connection;
 	}
 
+	public String getDatabaseName() {
+		if (this.connection == null) {
+			return null;
+		}
+		try {
+			return this.connection.getMetaData().getDatabaseProductName().toLowerCase();
+		} catch (SQLException e) {
+			return null;
+		}
+	}
+
+	public String getDatabaseVersion() {
+		if (this.connection == null) {
+			return null;
+		}
+		try {
+			return this.connection.getMetaData().getDatabaseProductVersion();
+		} catch (SQLException e) {
+			return null;
+		}
+	}
+
 	public boolean isShowSql() {
 		return isShowSql;
 	}
@@ -546,7 +572,7 @@ public class DataAccess {
 				StackTraceElement trace = traces[i];
 				if (!trace.getClassName().equals(this.getClass().getName())) {
 					StringBuilder msgBuffer = new StringBuilder();
-					msgBuffer.append("替换参数后SQL语句:");
+					msgBuffer.append("替换参数后SQL语句:\n");
 					msgBuffer.append(replaceParam(sql, params));
 					msgBuffer.append("\n");
 					msgBuffer.append("调试SQL语句:");
@@ -573,7 +599,7 @@ public class DataAccess {
 																// Writer中
 				t.printStackTrace(new PrintWriter(stringWriter));
 				StringBuilder msgBuffer = new StringBuilder();
-				msgBuffer.append("替换参数后SQL语句:");
+				msgBuffer.append("替换参数后SQL语句:\n");
 				msgBuffer.append(replaceParam(sql, params));
 				msgBuffer.append("\n");
 				msgBuffer.append("出错SQL语句:");

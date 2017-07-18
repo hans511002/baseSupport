@@ -1,9 +1,7 @@
 package com.ery.base.support.common.aop;
 
+public interface IAopMethodFilter {
 
-public interface IAopMethodFilter{
-
-    
-    public boolean filter(Class<?> souceClass,String methodName,Class<?>[] paramType);
+	public boolean filter(Class<?> souceClass, String methodName, Class<?>[] paramType);
 
 }

@@ -3,8 +3,8 @@
 <dwr xmlns="http://directwebremoting.org/schema/dwr20" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://directwebremoting.org/schema/dwr20 ../META-INF/dwr20.xsd ">
     <init>
         <creator id="db" class="tydic.frame.dwr.DBCreator"/>
-        <converter id="nestedMap" class="tydic.frame.dwr.NestedMapConverter"/>
-        <converter id="nestedCollection" class="tydic.frame.dwr.NestedCollectionConverter"/>
+        <converter id="nestedMap" class="com.ery.base.support.dwr.NestedMapConverter"/>
+        <converter id="nestedCollection" class="com.ery.base.supportdwr.NestedCollectionConverter"/>
     </init>
     <allow>
         <create creator="db" javascript="TestAction">
@@ -15,7 +15,7 @@
         <convert converter="nestedMap" match="java.util.Map"/>
 
         <!--bean类转换器-->
-        <convert converter="bean" match="tydic.frame.test.Page"/>
+        <convert converter="bean" match="com.ery.base.support.test.Page"/>
         <convert converter="bean" match="com.ery.base.support.test.UserPO"/>
         
         <!--异常处理 -->

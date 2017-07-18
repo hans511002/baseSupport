@@ -4,12 +4,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.LogRecord;
 
-
-
 public class LogFormatter extends java.util.logging.Formatter {
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-	
 	public String format(LogRecord record) {
 		StringBuffer strBuffer = new StringBuffer();
 		strBuffer.append("\n");
