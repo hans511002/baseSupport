@@ -2,7 +2,7 @@
 <!DOCTYPE dwr PUBLIC "-//GetAhead Limited//DTD Direct Web Remoting 2.0//EN" "http://www.getahead.ltd.uk/dwr/dwr20.dtd">
 <dwr xmlns="http://directwebremoting.org/schema/dwr20" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://directwebremoting.org/schema/dwr20 ../META-INF/dwr20.xsd ">
     <init>
-        <creator id="db" class="tydic.frame.dwr.DBCreator"/>
+        <creator id="db" class="com.ery.base.support.dwr.DBCreator"/>
         <converter id="nestedMap" class="com.ery.base.support.dwr.NestedMapConverter"/>
         <converter id="nestedCollection" class="com.ery.base.supportdwr.NestedCollectionConverter"/>
     </init>
