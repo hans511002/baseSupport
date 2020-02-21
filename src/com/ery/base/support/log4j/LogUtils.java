@@ -21,6 +21,7 @@ import org.apache.log4j.helpers.Loader;
 import org.apache.log4j.helpers.OptionConverter;
 
 import com.ery.base.support.utils.Convert;
+import com.sobey.jcg.support.log4j.LoggerExt;
 
 public class LogUtils {
 
@@ -39,6 +40,20 @@ public class LogUtils {
 	private static int level = 0;
 	private static Map<String, Logger> loggerMap = new HashMap<String, Logger>();
 	private static LoggerExtFactory factory = new LoggerExtFactory();
+
+	public static Logger getLogger() {
+		StackTraceElement trace = Thread.currentThread().getStackTrace()[STACK_TRACE_EXT_NUM];
+		String className = KEY_PREFIX + trace.getClassName();
+		Logger logger = loggerMap.get(className);
+		if (logger == null) {
+			logger = LoggerExt.getLogger(className, factory);
+			if (LogUtils.level > 0) {
+				setLevel(logger, LogUtils.level);
+			}
+			loggerMap.put(className, logger);
+		}
+		return logger;
+	}
 
 	public static void setLevel(int level) {
 		LogUtils.level = level;
