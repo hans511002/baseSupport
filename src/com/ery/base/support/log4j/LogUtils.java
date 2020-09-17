@@ -19,9 +19,11 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.Priority;
 import org.apache.log4j.helpers.Loader;
 import org.apache.log4j.helpers.OptionConverter;
+import org.apache.log4j.spi.LoggerRepository;
+import org.slf4j.helpers.FormattingTuple;
+import org.slf4j.helpers.MessageFormatter;
 
 import com.ery.base.support.utils.Convert;
-import com.sobey.jcg.support.log4j.LoggerExt;
 
 public class LogUtils {
 
@@ -34,23 +36,44 @@ public class LogUtils {
 	public final static int INFO = 20000;
 	public final static int DEBUG = 10000;
 
-	private static String CHARSET = null;
-	private static String KEY_PREFIX = "";// classKey 前缀（避免className被第三方工具在log4j内部提前初始,如spring）
+	protected static String CHARSET = null;
+	protected static String KEY_PREFIX = "";// classKey 前缀（避免className被第三方工具在log4j内部提前初始,如spring）
 
-	private static int level = 0;
-	private static Map<String, Logger> loggerMap = new HashMap<String, Logger>();
-	private static LoggerExtFactory factory = new LoggerExtFactory();
+	protected static int level = 0;
+	protected static Map<String, Logger> loggerMap = new HashMap<String, Logger>();
+	protected static LoggerExtFactory factory = new LoggerExtFactory();
+
+	public static Map<String, Logger> getLoggerMap() {
+		return loggerMap;
+	}
 
 	public static Logger getLogger() {
-		StackTraceElement trace = Thread.currentThread().getStackTrace()[STACK_TRACE_EXT_NUM];
+		return getLogger(2);
+	}
+
+	static Logger getLogger(int l) {
+		StackTraceElement trace = Thread.currentThread().getStackTrace()[l];
 		String className = KEY_PREFIX + trace.getClassName();
-		Logger logger = loggerMap.get(className);
-		if (logger == null) {
-			logger = LoggerExt.getLogger(className, factory);
-			if (LogUtils.level > 0) {
-				setLevel(logger, LogUtils.level);
+		Logger logger = null;
+		synchronized (loggerMap) {
+			logger = loggerMap.get(className);
+			if (logger == null) {
+				logger = LoggerExt.getLogger(className, factory);
+				if (LogUtils.level > 0) {
+					setLevel(logger, LogUtils.level);
+				}
+				if (!(logger instanceof LoggerExt)) {
+					LoggerExt _logger = (LoggerExt) factory.makeNewLoggerInstance(className);
+					LoggerRepository rep = (LoggerRepository) logger.getLoggerRepository();
+					_logger.setRepository(rep);
+					_logger.setParent(logger.getParent());
+					if (LogUtils.level > 0) {
+						setLevel(_logger, LogUtils.level);
+					}
+					logger = _logger;
+				}
+				loggerMap.put(className, logger);
 			}
-			loggerMap.put(className, logger);
 		}
 		return logger;
 	}
@@ -103,16 +126,7 @@ public class LogUtils {
 	}
 
 	private static void log(int level, Object msgObj) {
-		StackTraceElement trace = Thread.currentThread().getStackTrace()[STACK_TRACE_EXT_NUM];
-		String className = KEY_PREFIX + trace.getClassName();
-		Logger logger = loggerMap.get(className);
-		if (logger == null) {
-			logger = LoggerExt.getLogger(className, factory);
-			if (LogUtils.level > 0) {
-				setLevel(logger, LogUtils.level);
-			}
-			loggerMap.put(className, logger);
-		}
+		Logger logger = getLogger(STACK_TRACE_EXT_NUM + 1);
 		String message = null;
 		try {
 			if (CHARSET != null) {
@@ -154,16 +168,7 @@ public class LogUtils {
 	}
 
 	private static void log(int level, Object msgObj, Throwable t) {
-		StackTraceElement trace = Thread.currentThread().getStackTrace()[STACK_TRACE_EXT_NUM];
-		String className = KEY_PREFIX + trace.getClassName();
-		Logger logger = loggerMap.get(className);
-		if (logger == null) {
-			logger = LoggerExt.getLogger(className, factory);
-			if (LogUtils.level > 0) {
-				setLevel(logger, LogUtils.level);
-			}
-			loggerMap.put(className, logger);
-		}
+		Logger logger = getLogger(STACK_TRACE_EXT_NUM + 1);
 		String message = null;
 		try {
 			if (CHARSET != null) {
@@ -198,13 +203,7 @@ public class LogUtils {
 
 	// 判断指定类位置打印日志可用否
 	private static boolean enabledFor(int level) {
-		StackTraceElement trace = Thread.currentThread().getStackTrace()[STACK_TRACE_EXT_NUM];
-		String className = KEY_PREFIX + trace.getClassName();
-		Logger logger = loggerMap.get(className);
-		if (logger == null) {
-			logger = LoggerExt.getLogger(className, factory);
-			loggerMap.put(className, logger);
-		}
+		Logger logger = getLogger(STACK_TRACE_EXT_NUM + 1);
 		switch (level) {
 		case DEBUG:
 			return logger.isDebugEnabled();
@@ -246,52 +245,202 @@ public class LogUtils {
 		return enabledFor(TRACE);
 	}
 
-	public static void debug(java.lang.Object message) {
+	public static boolean isDebugEnabled() {
+		return enabledFor(DEBUG);
+	}
+
+	public static boolean isErrorEnabled() {
+		return enabledFor(ERROR);
+	}
+
+	public static boolean isFatalEnabled() {
+		return enabledFor(FATAL);
+	}
+
+	public static boolean isInfoEnabled() {
+		return enabledFor(INFO);
+	}
+
+	public static boolean isWarnEnabled() {
+		return enabledFor(WARN);
+	}
+
+	public static boolean isTraceEnabled() {
+		return enabledFor(TRACE);
+	}
+
+	public static void debug(Object message) {
 		log(DEBUG, message);
 	}
 
-	public static void debug(java.lang.Object message, java.lang.Throwable t) {
+	public static void debug(String message, java.lang.Throwable t) {
 		log(DEBUG, message, t);
 	}
 
-	public static void error(java.lang.Object message) {
+	public static void debug(String format, Object arg) {
+		if (isDebugEnabled()) {
+			FormattingTuple ft = MessageFormatter.format(format, arg);
+			log(DEBUG, ft.getMessage(), ft.getThrowable());
+		}
+	}
+
+	public static void debug(String format, Object arg1, Object arg2) {
+		if (isDebugEnabled()) {
+			FormattingTuple ft = MessageFormatter.format(format, arg1, arg2);
+			log(DEBUG, ft.getMessage(), ft.getThrowable());
+		}
+	}
+
+	public static void debug(String format, Object... arguments) {
+		if (isDebugEnabled()) {
+			FormattingTuple ft = MessageFormatter.arrayFormat(format, arguments);
+			log(DEBUG, ft.getMessage(), ft.getThrowable());
+		}
+	}
+
+	public static void error(Object message) {
 		log(ERROR, message);
 	}
 
-	public static void error(java.lang.Object message, java.lang.Throwable t) {
+	public static void error(String message, java.lang.Throwable t) {
 		log(ERROR, message, t);
 	}
 
-	public static void fatal(java.lang.Object message) {
+	public static void error(String format, Object arg) {
+		if (isErrorEnabled()) {
+			FormattingTuple ft = MessageFormatter.format(format, arg);
+			log(ERROR, ft.getMessage(), ft.getThrowable());
+		}
+	}
+
+	public static void error(String format, Object arg1, Object arg2) {
+		if (isErrorEnabled()) {
+			FormattingTuple ft = MessageFormatter.format(format, arg1, arg2);
+			log(ERROR, ft.getMessage(), ft.getThrowable());
+		}
+	}
+
+	public static void error(String format, Object... arguments) {
+		if (isErrorEnabled()) {
+			FormattingTuple ft = MessageFormatter.arrayFormat(format, arguments);
+			log(ERROR, ft.getMessage(), ft.getThrowable());
+		}
+	}
+
+	public static void fatal(Object message) {
 		log(FATAL, message);
 	}
 
-	public static void fatal(java.lang.Object message, java.lang.Throwable t) {
+	public static void fatal(String message, java.lang.Throwable t) {
 		log(FATAL, message, t);
 	}
 
-	public static void info(java.lang.Object message) {
+	public static void fatal(String format, Object arg) {
+		if (isFatalEnabled()) {
+			FormattingTuple ft = MessageFormatter.format(format, arg);
+			log(FATAL, ft.getMessage(), ft.getThrowable());
+		}
+	}
+
+	public static void fatal(String format, Object arg1, Object arg2) {
+		if (isFatalEnabled()) {
+			FormattingTuple ft = MessageFormatter.format(format, arg1, arg2);
+			log(FATAL, ft.getMessage(), ft.getThrowable());
+		}
+	}
+
+	public static void fatal(String format, Object... arguments) {
+		if (isFatalEnabled()) {
+			FormattingTuple ft = MessageFormatter.arrayFormat(format, arguments);
+			log(FATAL, ft.getMessage(), ft.getThrowable());
+		}
+	}
+
+	public static void info(Object message) {
 		log(INFO, message);
 	}
 
-	public static void info(java.lang.Object message, java.lang.Throwable t) {
+	public static void info(String message, java.lang.Throwable t) {
 		log(INFO, message, t);
 	}
 
-	public static void warn(java.lang.Object message) {
+	public static void info(String format, Object arg) {
+		if (isInfoEnabled()) {
+			FormattingTuple ft = MessageFormatter.format(format, arg);
+			log(INFO, ft.getMessage(), ft.getThrowable());
+		}
+	}
+
+	public static void info(String format, Object arg1, Object arg2) {
+		if (isInfoEnabled()) {
+			FormattingTuple ft = MessageFormatter.format(format, arg1, arg2);
+			log(INFO, ft.getMessage(), ft.getThrowable());
+		}
+	}
+
+	public static void info(String format, Object... arguments) {
+		if (isInfoEnabled()) {
+			FormattingTuple ft = MessageFormatter.arrayFormat(format, arguments);
+			log(INFO, ft.getMessage(), ft.getThrowable());
+		}
+	}
+
+	public static void warn(Object message) {
 		log(WARN, message);
 	}
 
-	public static void warn(java.lang.Object message, java.lang.Throwable t) {
+	public static void warn(String message, java.lang.Throwable t) {
 		log(WARN, message, t);
 	}
 
-	public static void trace(java.lang.Object message) {
+	public static void warn(String format, Object arg) {
+		if (isWarnEnabled()) {
+			FormattingTuple ft = MessageFormatter.format(format, arg);
+			log(WARN, ft.getMessage(), ft.getThrowable());
+		}
+	}
+
+	public static void warn(String format, Object arg1, Object arg2) {
+		if (isWarnEnabled()) {
+			FormattingTuple ft = MessageFormatter.format(format, arg1, arg2);
+			log(WARN, ft.getMessage(), ft.getThrowable());
+		}
+	}
+
+	public static void warn(String format, Object... arguments) {
+		if (isWarnEnabled()) {
+			FormattingTuple ft = MessageFormatter.arrayFormat(format, arguments);
+			log(WARN, ft.getMessage(), ft.getThrowable());
+		}
+	}
+
+	public static void trace(Object message) {
 		log(TRACE, message);
 	}
 
-	public static void trace(java.lang.Object message, java.lang.Throwable t) {
+	public static void trace(String message, java.lang.Throwable t) {
 		log(TRACE, message, t);
+	}
+
+	public static void trace(String format, Object arg) {
+		if (isTraceEnabled()) {
+			FormattingTuple ft = MessageFormatter.format(format, arg);
+			log(TRACE, ft.getMessage(), ft.getThrowable());
+		}
+	}
+
+	public static void trace(String format, Object arg1, Object arg2) {
+		if (isTraceEnabled()) {
+			FormattingTuple ft = MessageFormatter.format(format, arg1, arg2);
+			log(TRACE, ft.getMessage(), ft.getThrowable());
+		}
+	}
+
+	public static void trace(String format, Object... arguments) {
+		if (isTraceEnabled()) {
+			FormattingTuple ft = MessageFormatter.arrayFormat(format, arguments);
+			log(TRACE, ft.getMessage(), ft.getThrowable());
+		}
 	}
 
 	private static Properties log4jProp;
