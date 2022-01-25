@@ -7,8 +7,8 @@ import java.security.PrivilegedAction;
 
 import com.ery.base.support.log4j.LogUtils;
 
+import jdk.internal.ref.Cleaner;
 import sun.management.ManagementFactoryHelper;
-import sun.misc.Cleaner;
 
 public class Utils {
 

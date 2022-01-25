@@ -1,0 +1,9 @@
+/.settings
+/bin
+/out
+/release
+/.classpath
+/.project
+/.tern-project
+/readme.txt
+/WebRoot/WEB-INF/classes
