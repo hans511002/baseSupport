@@ -15,7 +15,7 @@ public class UtilTest {
 
 		if (true)
 			return;
-		LogUtils.info(Utils.getMinDistancePrimeNum(112, false));
+ 		LogUtils.info(Utils.getMinDistancePrimeNum(112, false));
 		int bucketNum = (int) Utils.getMinDistancePrimeNum(100000, true);// 桶数
 		int size = 4000000;// 数据
 

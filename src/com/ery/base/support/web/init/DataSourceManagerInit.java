@@ -13,7 +13,6 @@ import com.ery.base.support.jndi.ILookupHandler;
 import com.ery.base.support.jndi.IServer;
 import com.ery.base.support.log4j.LogUtils;
 import com.ery.base.support.sys.DataSourceManager;
-import com.ery.base.support.sys.SystemConstant;
 import com.ery.base.support.sys.SystemVariable;
 import com.ery.base.support.utils.ClassUtils;
 import com.ery.base.support.web.ISystemStart;
@@ -31,8 +30,8 @@ public class DataSourceManagerInit implements ISystemStart {
 		try {
 			DataAccess access = (DataAccess) AopFactory.getInstance(DataAccess.class, new InvokeAdapter() {
 				public boolean beforeInvoke(Object source, String methodName, Object[] args) {
-					System.out.println("public boolean beforeInvoke(" + source + ", " + methodName + ",   " + args
-							+ ")");
+					System.out
+							.println("public boolean beforeInvoke(" + source + ", " + methodName + ",   " + args + ")");
 					return true;
 				}
 
@@ -45,12 +44,12 @@ public class DataSourceManagerInit implements ISystemStart {
 
 				public void exceptionInvoke(Object source, String methodName, Throwable exception, Object[] args)
 						throws Throwable {
-					System.out.println("public boolean exceptionInvoke(" + source + ", " + methodName + ",   " + args
-							+ ")");
+					System.out.println(
+							"public boolean exceptionInvoke(" + source + ", " + methodName + ",   " + args + ")");
 					exception.printStackTrace();
 					throw exception;
 				}
-			}, new String[] { "\\w*" },// 要进行拦截的方法正则表达式。
+			}, new String[] { "\\w*" }, // 要进行拦截的方法正则表达式。
 					new IAopMethodFilter() {
 						/**
 						 * 过滤器，过滤某个方法，返回true表示可以进行AOP拦截，返回false表示不能进行AOP拦截，与AopFactory联合使用
@@ -85,12 +84,12 @@ public class DataSourceManagerInit implements ISystemStart {
 					if (dds == null)
 						dds = _dds;
 				}
-			} else {
-				SystemConstant.setDB_CONF_FILE(dbProfile);
+//			} else {
+//				SystemConstant.setDB_CONF_FILE(dbProfile);
 			}
 			// 自动获取服务器容器类型
-			List<Class<?>> list = ClassUtils
-					.getAllClassByInterface(IServer.class, IServer.class.getPackage().getName());
+			List<Class<?>> list = ClassUtils.getAllClassByInterface(IServer.class,
+					IServer.class.getPackage().getName());
 			LogUtils.info("IServers=" + list);
 			for (Class class1 : list) {
 				try {

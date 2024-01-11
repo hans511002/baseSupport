@@ -6,7 +6,6 @@ import javax.servlet.ServletContextListener;
 
 import com.ery.base.support.log4j.LogUtils;
 
-
 public class SystemInitListener implements ServletContextListener {
 	private ISystemStart[] systemStarts = null;
 	public static boolean inWebApp = false;
@@ -17,22 +16,24 @@ public class SystemInitListener implements ServletContextListener {
 		ServletContext servletContext = servletContextEvent.getServletContext();
 		String sysStartInitClass = servletContext.getInitParameter("sysStartInitClass").replaceAll("\\n", "")
 				.replaceAll("\\s", "");
-		String[] initClasses = null;
-		if (sysStartInitClass.contains(",")) {
-			initClasses = sysStartInitClass.split(",");
-		} else {
-			initClasses = new String[] { sysStartInitClass };
-		}
-		systemStarts = new ISystemStart[initClasses.length];
-		// 依次初始化类
-		int i = 0;
-		for (String initClass : initClasses) {
-			try {
-				systemStarts[i++] = (ISystemStart) Class.forName(initClass).newInstance();
-				systemStarts[i - 1].setServletContext(servletContext);
-				systemStarts[i - 1].init();
-			} catch (Exception e) {
-				LogUtils.error(null, e);
+		if (sysStartInitClass != null && !sysStartInitClass.isEmpty()) {
+			String[] initClasses = null;
+			if (sysStartInitClass.contains(",")) {
+				initClasses = sysStartInitClass.split(",");
+			} else {
+				initClasses = new String[] { sysStartInitClass };
+			}
+			systemStarts = new ISystemStart[initClasses.length];
+			// 依次初始化类
+			int i = 0;
+			for (String initClass : initClasses) {
+				try {
+					systemStarts[i++] = (ISystemStart) Class.forName(initClass).newInstance();
+					systemStarts[i - 1].setServletContext(servletContext);
+					systemStarts[i - 1].init();
+				} catch (Exception e) {
+					LogUtils.error(null, e);
+				}
 			}
 		}
 	}

@@ -1,15 +1,9 @@
 package com.ery.base.support.utils;
 
-import java.lang.reflect.Method;
-import java.security.AccessController;
+import java.lang.management.ManagementFactory;
 import java.security.MessageDigest;
-import java.security.PrivilegedAction;
-
 import com.ery.base.support.log4j.LogUtils;
-
-import jdk.internal.ref.Cleaner;
-import sun.management.ManagementFactoryHelper;
-
+ 
 public class Utils {
 
 	private static char hexDigits[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
@@ -51,7 +45,7 @@ public class Utils {
 
 	// 获取当前程序进程号
 	public static int getCurrentProcessId() {
-		String name = ManagementFactoryHelper.getRuntimeMXBean().getName();
+		String name = ManagementFactory.getRuntimeMXBean().getName();
 		return Convert.toInt(name.substring(0, name.indexOf("@")));
 	}
 
@@ -64,22 +58,22 @@ public class Utils {
 		return b1;
 	}
 
-	// 强制释放某些资源，如强制关闭MappedByteBuffer打开的文件
-	public static void forceDestory(final Object obj) {
-		AccessController.doPrivileged(new PrivilegedAction() {
-			public Object run() {
-				try {
-					Method getCleanerMethod = obj.getClass().getMethod("cleaner", new Class[0]);
-					getCleanerMethod.setAccessible(true);
-					Cleaner cleaner = (Cleaner) getCleanerMethod.invoke(obj, new Object[0]);
-					cleaner.clean();
-				} catch (Exception e) {
-					LogUtils.error(null, e);
-				}
-				return null;
-			}
-		});
-	}
+//	// 强制释放某些资源，如强制关闭MappedByteBuffer打开的文件
+//	public static void forceDestory(final Object obj) {
+//		AccessController.doPrivileged(new PrivilegedAction() {
+//			public Object run() {
+//				try {
+//					Method getCleanerMethod = obj.getClass().getMethod("cleaner", new Class[0]);
+//					getCleanerMethod.setAccessible(true);
+//					Cleaner cleaner = (Cleaner) getCleanerMethod.invoke(obj, new Object[0]);
+//					cleaner.clean();
+//				} catch (Exception e) {
+//					LogUtils.error(null, e);
+//				}
+//				return null;
+//			}
+//		});
+//	}
 
 	public static long getMinDistancePrimeNum(long num, boolean gl) {
 		if (num < 0)

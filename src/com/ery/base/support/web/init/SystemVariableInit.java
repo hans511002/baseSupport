@@ -14,7 +14,7 @@ import com.ery.base.support.web.ISystemStart;
 
 public class SystemVariableInit implements ISystemStart {
 
-	private ServletContext servletContext;
+	protected ServletContext servletContext;
 	public static String WEB_ROOT_PATH = null;
 	public static String CLASS_PATH = null;
 
