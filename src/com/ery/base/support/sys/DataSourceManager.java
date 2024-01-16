@@ -50,8 +50,8 @@ public class DataSourceManager {
 				}
 				try {
 					dataSrcPOMap.put(dsId, ds);
-					if (ds.getDATA_SOURCE_TYPE() == DataSrcPO.DS_TYPE_MYSQL ||
-							ds.getDATA_SOURCE_TYPE() == DataSrcPO.DS_TYPE_ORACLE) {
+					if (ds.getDATA_SOURCE_TYPE() == DataSrcPO.DS_TYPE_MYSQL
+							|| ds.getDATA_SOURCE_TYPE() == DataSrcPO.DS_TYPE_ORACLE) {
 						Properties pro = new Properties();
 						pro.setProperty(DruidDataSourceFactory.PROP_URL, ds.getDATA_SOURCE_URL());
 						pro.setProperty(DruidDataSourceFactory.PROP_USERNAME, ds.getDATA_SOURCE_USER());
@@ -141,8 +141,8 @@ public class DataSourceManager {
 						pro.put(DruidDataSourceFactory.PROP_CONNECTIONPROPERTIES, "config.decrypt=true");
 					} else {
 						if (connectPros.indexOf("config.decrypt=") == -1) {
-							pro.put(DruidDataSourceFactory.PROP_CONNECTIONPROPERTIES, connectPros +
-									";config.decrypt=true");
+							pro.put(DruidDataSourceFactory.PROP_CONNECTIONPROPERTIES,
+									connectPros + ";config.decrypt=true");
 						}
 					}
 				}
